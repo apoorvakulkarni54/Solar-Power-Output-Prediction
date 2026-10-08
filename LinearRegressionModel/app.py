@@ -49,7 +49,13 @@ def load_data():
         return None
 
 
-model = load_model()
+import joblib
+import os
+
+@st.cache_resource
+def load_model():
+    model_path = os.path.join(os.path.dirname(__file__), "model.pkl")
+    return joblib.load(model_path)
 df = load_data()
 
 
