@@ -4,6 +4,14 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
+import os
+import joblib
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+@st.cache_resource
+def load_model():
+    return joblib.load(os.path.join(BASE_DIR, "model.pkl"))
 
 # ---------------- Page setup ----------------
 st.set_page_config(page_title="Solar Power Predictor", page_icon="☀️", layout="wide")
