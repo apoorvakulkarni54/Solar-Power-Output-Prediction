@@ -266,25 +266,17 @@ with tab1:
         # ====================================================
         # PREDICTION RESULT
         # ====================================================
+        st.success("☀️ Predicted Solar Power Output")
 
-        st.markdown(
-            f"""
-            <div class="prediction-card">
-                <div class="prediction-title">
-                    Predicted Solar Power Output
-                </div>
-
-                <div class="prediction-value">
-                    {pred:.2f} W
-                </div>
-
-                <div>
-                    per panel at {irr:.0f} W/m²
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
+        st.metric(
+            "Power Output",
+            f"{pred:.2f} W"
         )
+
+        st.write(
+            f"Per panel at **{irr:.0f} W/m²** solar irradiance."
+        )
+        
 
 
         # ====================================================
