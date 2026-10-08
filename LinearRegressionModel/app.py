@@ -597,20 +597,32 @@ with tab1:
             width="stretch"
         )
 
+# ---------------- Model equation ----------------
 
-        # ---------------- Model equation ----------------
-        prediction_html = (
-    '<div class="card" style="text-align:center;">'
-    '<h3>Predicted Solar Power Output</h3>'
-    f'<span style="font-size:2.6rem;font-weight:bold;color:#e8740c;">'
-    f'{pred:.2f} W'
-    '</span>'
-    '<br>'
-    f'per panel at {irr:.0f} W/m²'
-    '</div>'
+st.markdown(
+    f"""
+    <div class="card">
+
+        <h3>🧮 Model Equation</h3>
+
+        <p style="font-size:1.1rem;">
+            Output = {model.intercept_:.3f}
+            + {model.coef_[0]:.4f}
+            × Irradiance
+        </p>
+
+        <p style="font-size:1.1rem;">
+            Every extra <b>100 W/m²</b> of sunlight
+            adds about
+            <b>{model.coef_[0] * 100:.0f} W</b>
+            per panel.
+        </p>
+
+    </div>
+    """,
+    unsafe_allow_html=True
 )
-
-st.markdown(prediction_html, unsafe_allow_html=True)
+        
 
        
 
