@@ -7,7 +7,9 @@ import streamlit as st
 import os
 
 
-# ---------------- Model setup ----------------
+# ============================================================
+# MODEL SETUP
+# ============================================================
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -18,7 +20,7 @@ def load_model():
     return joblib.load(model_path)
 
 
-# Load the trained model
+# Load trained model
 model = load_model()
 
 
@@ -35,31 +37,41 @@ def load_data():
 df = load_data()
 
 
-# ---------------- Prediction function ----------------
+# ============================================================
+# PREDICTION FUNCTION
+# ============================================================
 
 def predict(irr):
     return max(
         float(
             model.predict(
-                pd.DataFrame({
-                    "solar_irradiance": [irr]
-                })
+                pd.DataFrame(
+                    {
+                        "solar_irradiance": [irr]
+                    }
+                )
             )[0]
         ),
         0.0
     )
 
 
-# ---------------- Solar scene ----------------
+# ============================================================
+# SOLAR SCENE
+# ============================================================
 
 def solar_scene(irr):
-    """Draw a sun + solar panel image; the sun gets bigger and brighter with irradiance."""
 
     level = min(irr / 1000, 1)
 
     radius = 18 + 14 * level
 
-    sky = f"rgb({int(120 + 100 * level)}, {int(170 + 50 * level)}, 255)"
+    sky = (
+        f"rgb("
+        f"{int(120 + 100 * level)}, "
+        f"{int(170 + 50 * level)}, "
+        f"255)"
+    )
 
     rays = "".join(
         f'<line x1="60" y1="60" '
@@ -67,7 +79,12 @@ def solar_scene(irr):
         f'y2="{60 + 50 * np.sin(a):.1f}" '
         f'stroke="#FFD700" stroke-width="3" '
         f'opacity="{0.3 + 0.7 * level:.2f}"/>'
-        for a in np.linspace(0, 2 * np.pi, 12, endpoint=False)
+        for a in np.linspace(
+            0,
+            2 * np.pi,
+            12,
+            endpoint=False
+        )
     )
 
     cells = "".join(
@@ -80,44 +97,46 @@ def solar_scene(irr):
     )
 
     return f"""
-    <svg viewBox="0 0 380 240" width="100%"
-         style="border-radius:14px;background:{sky}">
+<svg viewBox="0 0 380 240" width="100%"
+     style="border-radius:14px;background:{sky}">
 
-      <g class="sun-rays">
+    <g class="sun-rays">
         {rays}
-      </g>
+    </g>
 
-      <circle cx="60" cy="60"
-              r="{radius:.1f}"
-              fill="#FFD700"
-              opacity="{0.5 + 0.5 * level:.2f}"/>
+    <circle cx="60" cy="60"
+            r="{radius:.1f}"
+            fill="#FFD700"
+            opacity="{0.5 + 0.5 * level:.2f}"/>
 
-      <polygon points="140,110 345,110 355,210 130,210"
-               fill="#0f172a"/>
+    <polygon points="140,110 345,110 355,210 130,210"
+             fill="#0f172a"/>
 
-      {cells}
+    {cells}
 
-      <rect x="235" y="205"
-            width="10" height="30"
-            fill="#475569"/>
+    <rect x="235" y="205"
+          width="10" height="30"
+          fill="#475569"/>
 
-      <rect x="0" y="232"
-            width="380" height="8"
-            fill="#65a30d"/>
+    <rect x="0" y="232"
+          width="380" height="8"
+          fill="#65a30d"/>
 
-      <text x="370" y="25"
-            text-anchor="end"
-            font-size="16"
-            fill="white"
-            font-weight="bold">
+    <text x="370" y="25"
+          text-anchor="end"
+          font-size="16"
+          fill="white"
+          font-weight="bold">
         {irr:.0f} W/m²
-      </text>
+    </text>
 
-    </svg>
-    """
+</svg>
+"""
 
 
-# ---------------- Page setup ----------------
+# ============================================================
+# PAGE SETUP
+# ============================================================
 
 st.set_page_config(
     page_title="Solar Power Predictor",
@@ -126,7 +145,12 @@ st.set_page_config(
 )
 
 
-st.markdown("""
+# ============================================================
+# CUSTOM CSS
+# ============================================================
+
+st.markdown(
+    """
 <style>
 
 .hero {
@@ -137,12 +161,12 @@ st.markdown("""
         #4facfe 100%
     );
 
-    padding: 25px 30px;
+    padding: 20px 25px;
     border-radius: 18px;
     color: white;
     display: flex;
     align-items: center;
-    gap: 25px;
+    gap: 20px;
     margin-bottom: 20px;
 }
 
@@ -156,6 +180,7 @@ st.markdown("""
     margin: 5px 0 0 0;
     font-size: 1.1rem;
 }
+
 .card {
     background: #fff8ec;
     border-left: 6px solid #ff9a3c;
@@ -170,13 +195,8 @@ st.markdown("""
     color: #e8740c;
 }
 
-
-.card h3 {
-    margin: 0;
-    color: #e8740c;
-}
-
 @keyframes spin {
+
     from {
         transform: rotate(0deg);
     }
@@ -184,6 +204,7 @@ st.markdown("""
     to {
         transform: rotate(360deg);
     }
+
 }
 
 .sun-rays {
@@ -192,13 +213,26 @@ st.markdown("""
 }
 
 </style>
-""", unsafe_allow_html=True)
-# ---------------- Hero banner ----------------
+""",
+    unsafe_allow_html=True
+)
+
+
+# ============================================================
+# HERO BANNER
+# ============================================================
 
 hero_rays = "".join(
-    f'<line x1="60" y1="60" x2="{60 + 55 * np.cos(a):.1f}" '
-    f'y2="{60 + 55 * np.sin(a):.1f}" stroke="white" stroke-width="4"/>'
-    for a in np.linspace(0, 2 * np.pi, 12, endpoint=False)
+    f'<line x1="60" y1="60" '
+    f'x2="{60 + 55 * np.cos(a):.1f}" '
+    f'y2="{60 + 55 * np.sin(a):.1f}" '
+    f'stroke="white" stroke-width="4"/>'
+    for a in np.linspace(
+        0,
+        2 * np.pi,
+        12,
+        endpoint=False
+    )
 )
 
 hero_html = (
@@ -216,21 +250,27 @@ hero_html = (
     '</div>'
 )
 
-st.markdown(hero_html, unsafe_allow_html=True)
-
-
-
-
-
-# ---------------- Tabs ----------------
-
-tab1, tab2, tab3 = st.tabs(
-    ["🔮 Predict", "📊 Data Insights", "📁 Batch Predict"]
+st.markdown(
+    hero_html,
+    unsafe_allow_html=True
 )
 
 
 # ============================================================
-# TAB 1: Prediction
+# TABS
+# ============================================================
+
+tab1, tab2, tab3 = st.tabs(
+    [
+        "🔮 Predict",
+        "📊 Data Insights",
+        "📁 Batch Predict"
+    ]
+)
+
+
+# ============================================================
+# TAB 1 — PREDICTION
 # ============================================================
 
 with tab1:
@@ -238,6 +278,10 @@ with tab1:
     st.markdown(
         "#### ✍️ Enter values and click **Predict**"
     )
+
+    # --------------------------------------------------------
+    # INPUT FORM
+    # --------------------------------------------------------
 
     with st.form("predict_form"):
 
@@ -281,7 +325,12 @@ with tab1:
         )
 
 
+    # --------------------------------------------------------
+    # SAVE INPUTS AFTER BUTTON CLICK
+    # --------------------------------------------------------
+
     if submitted:
+
         st.session_state["inputs"] = (
             irr,
             panels,
@@ -290,6 +339,10 @@ with tab1:
         )
 
 
+    # --------------------------------------------------------
+    # BEFORE PREDICT
+    # --------------------------------------------------------
+
     if "inputs" not in st.session_state:
 
         st.info(
@@ -297,11 +350,18 @@ with tab1:
             "to see the results."
         )
 
+
+    # --------------------------------------------------------
+    # AFTER PREDICT
+    # --------------------------------------------------------
+
     else:
 
-        irr, panels, sun_hours, price = st.session_state["inputs"]
+        irr, panels, sun_hours, price = (
+            st.session_state["inputs"]
+        )
 
-        # FIXED: model is now loaded above
+        # Prediction
         pred = predict(irr)
 
         total_kw = pred * panels / 1000
@@ -309,21 +369,48 @@ with tab1:
         daily_kwh = total_kw * sun_hours
 
 
-        # ---------------- Prediction result ----------------
+        # ====================================================
+        # PREDICTION RESULT
+        # ====================================================
+
+        prediction_html = (
+            '<div class="card" '
+            'style="text-align:center; padding:12px 18px;">'
+            '<h3 style="margin:0 0 6px 0;">'
+            'Predicted Solar Power Output'
+            '</h3>'
+            '<div style="font-size:2.2rem; '
+            'font-weight:bold; color:#e8740c;">'
+            f'{pred:.2f} W'
+            '</div>'
+            '<div style="margin-top:4px;">'
+            f'per panel at {irr:.0f} W/m²'
+            '</div>'
+            '</div>'
+        )
+
         st.markdown(
-    f'<div class="card" style="text-align:center;">'
-    f'<h3>Predicted Solar Power Output</h3>'
-    f'<span style="font-size:2.6rem;font-weight:bold;color:#e8740c;">'
-    f'{pred:.2f} W'
-    f'</span><br>'
-    f'per panel at {irr:.0f} W/m²'
-    f'</div>',
-    unsafe_allow_html=True
-)
+            prediction_html,
+            unsafe_allow_html=True
+        )
 
-        
 
-        # ---------------- Metrics ----------------
+        # ====================================================
+        # TRAINING RANGE WARNING
+        # ====================================================
+
+        if irr < 104 or irr > 999:
+
+            st.warning(
+                "⚠️ This irradiance is outside the training range "
+                "(104–999 W/m²), so the prediction is an estimate "
+                "beyond the data."
+            )
+
+
+        # ====================================================
+        # METRICS
+        # ====================================================
 
         c1, c2, c3, c4 = st.columns(4)
 
@@ -348,10 +435,16 @@ with tab1:
         )
 
 
-        # ---------------- Solar scene + gauge ----------------
+        # ====================================================
+        # SOLAR SCENE + GAUGE
+        # ====================================================
 
         left, right = st.columns([1, 1])
 
+
+        # ----------------------------------------------------
+        # SOLAR SCENE
+        # ----------------------------------------------------
 
         with left:
 
@@ -384,12 +477,15 @@ with tab1:
                 )
 
 
+        # ----------------------------------------------------
+        # OUTPUT GAUGE
+        # ----------------------------------------------------
+
         with right:
 
             st.markdown(
                 "#### 🎯 Output Gauge"
             )
-
 
             gauge = go.Figure(
                 go.Indicator(
@@ -419,12 +515,10 @@ with tab1:
                                 "range": [0, 150],
                                 "color": "#dbeafe"
                             },
-
                             {
                                 "range": [150, 350],
                                 "color": "#fde68a"
                             },
-
                             {
                                 "range": [350, 600],
                                 "color": "#fdba74"
@@ -434,7 +528,6 @@ with tab1:
                 )
             )
 
-
             gauge.update_layout(
                 height=320,
                 margin=dict(
@@ -443,26 +536,25 @@ with tab1:
                 )
             )
 
-
             st.plotly_chart(
                 gauge,
                 width="stretch"
             )
 
 
-        # ---------------- Regression graph ----------------
+        # ====================================================
+        # REGRESSION GRAPH
+        # ====================================================
 
         st.markdown(
             "#### 📈 Where your prediction sits on the regression line"
         )
-
 
         xs = np.linspace(
             0,
             1200,
             100
         )
-
 
         line = model.predict(
             pd.DataFrame(
@@ -471,7 +563,6 @@ with tab1:
                 }
             )
         )
-
 
         fig = go.Figure()
 
@@ -543,18 +634,18 @@ with tab1:
         )
 
 
-        # ---------------- Generation through the day ----------------
+        # ====================================================
+        # GENERATION THROUGH THE DAY
+        # ====================================================
 
         st.markdown(
             "#### 🕒 Estimated generation through the day"
         )
 
-
         hours = np.arange(
             6,
             19
         )
-
 
         hourly_irr = (
             irr *
@@ -565,12 +656,10 @@ with tab1:
             )
         )
 
-
         hourly_out = [
             predict(h) * panels / 1000
             for h in hourly_irr
         ]
-
 
         day = px.area(
             x=hours,
@@ -586,34 +675,40 @@ with tab1:
             ]
         )
 
-
         day.update_layout(
             height=320
         )
-
 
         st.plotly_chart(
             day,
             width="stretch"
         )
-# ---------------- Model equation ----------------
 
-st.markdown(
-    "### 🧮 Model Equation"
-)
 
-st.markdown(
-    f"**Output = {model.intercept_:.3f} + {model.coef_[0]:.4f} × Irradiance**"
-)
+        # ====================================================
+        # MODEL EQUATION
+        # IMPORTANT:
+        # THIS IS INSIDE THE ELSE BLOCK.
+        # THEREFORE IT ONLY APPEARS AFTER PREDICT.
+        # ====================================================
 
-st.markdown(
-    f"Every extra **100 W/m²** of sunlight adds about "
-    f"**{model.coef_[0] * 100:.0f} W** per panel."
-)
+        st.markdown(
+            "### 🧮 Model Equation"
+        )
+
+        st.markdown(
+            f"**Output = {model.intercept_:.3f} + "
+            f"{model.coef_[0]:.4f} × Irradiance**"
+        )
+
+        st.markdown(
+            f"Every extra **100 W/m²** of sunlight adds about "
+            f"**{model.coef_[0] * 100:.0f} W** per panel."
+        )
 
 
 # ============================================================
-# TAB 2: Data Insights
+# TAB 2 — DATA INSIGHTS
 # ============================================================
 
 with tab2:
@@ -654,19 +749,19 @@ with tab2:
         )
 
 
-        # ---------------- Univariate ----------------
+        # ----------------------------------------------------
+        # UNIVARIATE
+        # ----------------------------------------------------
 
         st.markdown(
             "#### 📊 Univariate: distribution of a column"
         )
-
 
         col = st.selectbox(
             "Choose a column",
             df.columns,
             index=4
         )
-
 
         st.plotly_chart(
             px.histogram(
@@ -679,24 +774,23 @@ with tab2:
                     "#ff9a3c"
                 ]
             ),
-
             width="stretch"
         )
 
 
-        # ---------------- Bivariate ----------------
+        # ----------------------------------------------------
+        # BIVARIATE
+        # ----------------------------------------------------
 
         st.markdown(
             "#### 🔗 Bivariate: feature vs output"
         )
-
 
         feat = st.selectbox(
             "Choose a feature",
             df.columns[:-1],
             index=2
         )
-
 
         st.plotly_chart(
             px.scatter(
@@ -706,17 +800,17 @@ with tab2:
                 color="temperature",
                 color_continuous_scale="Plasma"
             ),
-
             width="stretch"
         )
 
 
-        # ---------------- Multivariate ----------------
+        # ----------------------------------------------------
+        # MULTIVARIATE
+        # ----------------------------------------------------
 
         st.markdown(
             "#### 🌡️ Multivariate: correlation heatmap"
         )
-
 
         st.plotly_chart(
             px.imshow(
@@ -726,36 +820,29 @@ with tab2:
                 zmin=-1,
                 zmax=1
             ),
-
             width="stretch"
         )
 
 
-        # ---------------- Key insights ----------------
+        # ----------------------------------------------------
+        # KEY INSIGHTS
+        # ----------------------------------------------------
+
+        st.markdown(
+            "### 💡 Key Insights"
+        )
 
         st.markdown(
             """
-            <div class="card">
-
-                <h3>💡 Key Insights</h3>
-
-                • Solar irradiance is the main driver of output (r ≈ 0.999).
-                <br>
-
-                • Output is about half of irradiance (≈ 0.5 × W/m²).
-                <br>
-
-                • Temperature, humidity and wind speed have almost no effect.
-
-            </div>
-            """,
-
-            unsafe_allow_html=True
+            - Solar irradiance is the main driver of output (r ≈ 0.999).
+            - Output is about half of irradiance (≈ 0.5 × W/m²).
+            - Temperature, humidity and wind speed have almost no effect.
+            """
         )
 
 
 # ============================================================
-# TAB 3: Batch prediction
+# TAB 3 — BATCH PREDICTION
 # ============================================================
 
 with tab3:
@@ -763,7 +850,6 @@ with tab3:
     st.write(
         "Upload a CSV with a **`solar_irradiance`** column."
     )
-
 
     file = st.file_uploader(
         "CSV file",
@@ -810,7 +896,6 @@ with tab3:
                     color="predicted_output",
                     color_continuous_scale="YlOrRd"
                 ),
-
                 width="stretch"
             )
 
@@ -828,7 +913,9 @@ with tab3:
             )
 
 
-# ---------------- Footer ----------------
+# ============================================================
+# FOOTER
+# ============================================================
 
 st.caption(
     "Built with Streamlit · Simple Linear Regression model"
