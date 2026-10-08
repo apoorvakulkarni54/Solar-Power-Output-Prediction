@@ -8,6 +8,10 @@ import os
 import joblib
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+@st.cache_resource
+def load_model():
+    return joblib.load(os.path.join(BASE_DIR, "model.pkl"))
+
 
 @st.cache_resource
 def load_model():
@@ -40,7 +44,7 @@ def load_model():
 @st.cache_data
 def load_data():
     try:
-        return pd.read_csv("solar_power_output.csv")
+        return pd.read_csv(os.path.join(BASE_DIR, "solar_power_output.csv"))
     except FileNotFoundError:
         return None
 
