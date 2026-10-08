@@ -156,15 +156,20 @@ st.markdown("""
     margin: 5px 0 0 0;
     font-size: 1.1rem;
 }
-
 .card {
     background: #fff8ec;
     border-left: 6px solid #ff9a3c;
-    padding: 15px 18px;
+    padding: 12px 18px;
     border-radius: 12px;
     margin-bottom: 10px;
     color: #333;
 }
+
+.card h3 {
+    margin: 0 0 8px 0;
+    color: #e8740c;
+}
+
 
 .card h3 {
     margin: 0;
