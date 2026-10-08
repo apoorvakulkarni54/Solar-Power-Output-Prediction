@@ -596,35 +596,21 @@ with tab1:
             day,
             width="stretch"
         )
-
 # ---------------- Model equation ----------------
 
 st.markdown(
-    f"""
-    <div class="card">
-
-        <h3>🧮 Model Equation</h3>
-
-        <p style="font-size:1.1rem;">
-            Output = {model.intercept_:.3f}
-            + {model.coef_[0]:.4f}
-            × Irradiance
-        </p>
-
-        <p style="font-size:1.1rem;">
-            Every extra <b>100 W/m²</b> of sunlight
-            adds about
-            <b>{model.coef_[0] * 100:.0f} W</b>
-            per panel.
-        </p>
-
-    </div>
-    """,
-    unsafe_allow_html=True
+    "### 🧮 Model Equation"
 )
-        
 
-       
+st.markdown(
+    f"**Output = {model.intercept_:.3f} + {model.coef_[0]:.4f} × Irradiance**"
+)
+
+st.markdown(
+    f"Every extra **100 W/m²** of sunlight adds about "
+    f"**{model.coef_[0] * 100:.0f} W** per panel."
+)
+
 
 # ============================================================
 # TAB 2: Data Insights
