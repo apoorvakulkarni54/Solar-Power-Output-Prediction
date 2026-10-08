@@ -191,31 +191,27 @@ st.markdown("""
 # ---------------- Hero banner ----------------
 
 hero_rays = "".join(
-    f'<line x1="60" y1="60" '
-    f'x2="{60 + 55 * np.cos(a):.1f}" '
-    f'y2="{60 + 55 * np.sin(a):.1f}" '
-    f'stroke="white" stroke-width="4"/>'
+    f'<line x1="60" y1="60" x2="{60 + 55 * np.cos(a):.1f}" '
+    f'y2="{60 + 55 * np.sin(a):.1f}" stroke="white" stroke-width="4"/>'
     for a in np.linspace(0, 2 * np.pi, 12, endpoint=False)
 )
 
-st.markdown(
-    f"""
-    <div class="hero">
-        <svg width="80" height="80" viewBox="0 0 120 120">
-            <g class="sun-rays">
-                {hero_rays}
-            </g>
-            <circle cx="60" cy="60" r="30" fill="#FFF3B0"/>
-        </svg>
-
-        <div>
-            <h1>Solar Power Output Predictor</h1>
-            <p>Simple Linear Regression · Predict panel output from sunlight</p>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True
+hero_html = (
+    '<div class="hero">'
+    '<svg width="80" height="80" viewBox="0 0 120 120">'
+    '<g class="sun-rays">'
+    + hero_rays +
+    '</g>'
+    '<circle cx="60" cy="60" r="30" fill="#FFF3B0"/>'
+    '</svg>'
+    '<div>'
+    '<h1>Solar Power Output Predictor</h1>'
+    '<p>Simple Linear Regression · Predict panel output from sunlight</p>'
+    '</div>'
+    '</div>'
 )
+
+st.markdown(hero_html, unsafe_allow_html=True)
 
 
 
@@ -598,31 +594,20 @@ with tab1:
 
 
         # ---------------- Model equation ----------------
+        prediction_html = (
+    '<div class="card" style="text-align:center;">'
+    '<h3>Predicted Solar Power Output</h3>'
+    f'<span style="font-size:2.6rem;font-weight:bold;color:#e8740c;">'
+    f'{pred:.2f} W'
+    '</span>'
+    '<br>'
+    f'per panel at {irr:.0f} W/m²'
+    '</div>'
+)
 
-        st.markdown(
-            f"""
-            <div class="card">
+st.markdown(prediction_html, unsafe_allow_html=True)
 
-                <h3>🧮 Model Equation</h3>
-
-                Output =
-                {model.intercept_:.3f}
-                +
-                {model.coef_[0]:.4f}
-                × Irradiance
-
-                <br>
-
-                Every extra <b>100 W/m²</b> of sunlight
-                adds about
-                <b>{model.coef_[0] * 100:.0f} W</b>
-                per panel.
-
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
+       
 
 # ============================================================
 # TAB 2: Data Insights
