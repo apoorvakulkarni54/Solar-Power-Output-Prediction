@@ -188,49 +188,37 @@ st.markdown("""
 
 </style>
 """, unsafe_allow_html=True)
-
-
 # ---------------- Hero banner ----------------
 
-st.markdown("""
-<div class="hero">
-
-  <svg width="80" height="80" viewBox="0 0 120 120">
-
-    <g class="sun-rays">
-""",
-unsafe_allow_html=True)
+hero_rays = "".join(
+    f'<line x1="60" y1="60" '
+    f'x2="{60 + 55 * np.cos(a):.1f}" '
+    f'y2="{60 + 55 * np.sin(a):.1f}" '
+    f'stroke="white" stroke-width="4"/>'
+    for a in np.linspace(0, 2 * np.pi, 12, endpoint=False)
+)
 
 st.markdown(
-    "".join(
-        f'<line x1="60" y1="60" '
-        f'x2="{60 + 55 * np.cos(a):.1f}" '
-        f'y2="{60 + 55 * np.sin(a):.1f}" '
-        f'stroke="white" stroke-width="4"/>'
-        for a in np.linspace(0, 2 * np.pi, 12, endpoint=False)
-    ),
+    f"""
+    <div class="hero">
+        <svg width="80" height="80" viewBox="0 0 120 120">
+            <g class="sun-rays">
+                {hero_rays}
+            </g>
+            <circle cx="60" cy="60" r="30" fill="#FFF3B0"/>
+        </svg>
+
+        <div>
+            <h1>Solar Power Output Predictor</h1>
+            <p>Simple Linear Regression · Predict panel output from sunlight</p>
+        </div>
+    </div>
+    """,
     unsafe_allow_html=True
 )
 
-st.markdown("""
-    </g>
 
-    <circle cx="60"
-            cy="60"
-            r="30"
-            fill="#FFF3B0"/>
 
-  </svg>
-
-  <div>
-    <h1>Solar Power Output Predictor</h1>
-    <p>
-      Simple Linear Regression · Predict panel output from sunlight
-    </p>
-  </div>
-
-</div>
-""", unsafe_allow_html=True)
 
 
 # ---------------- Tabs ----------------
@@ -321,39 +309,18 @@ with tab1:
 
 
         # ---------------- Prediction result ----------------
-
         st.markdown(
-            f"""
-            <div class="card" style="text-align:center">
+    f'<div class="card" style="text-align:center;">'
+    f'<h3>Predicted Solar Power Output</h3>'
+    f'<span style="font-size:2.6rem;font-weight:bold;color:#e8740c;">'
+    f'{pred:.2f} W'
+    f'</span><br>'
+    f'per panel at {irr:.0f} W/m²'
+    f'</div>',
+    unsafe_allow_html=True
+)
 
-                <h3>Predicted Solar Power Output</h3>
-
-                <span style="
-                    font-size:2.6rem;
-                    font-weight:bold;
-                    color:#e8740c
-                ">
-                    {pred:.2f} W
-                </span>
-
-                <br>
-
-                per panel at {irr:.0f} W/m²
-
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-
-        if irr < 104 or irr > 999:
-
-            st.warning(
-                "⚠️ This irradiance is outside the training range "
-                "(104–999 W/m²), so the prediction is an estimate "
-                "beyond the data."
-            )
-
+        
 
         # ---------------- Metrics ----------------
 
